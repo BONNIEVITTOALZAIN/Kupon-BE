@@ -1,0 +1,23 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Kupon {
+  id         String    @id @default(uuid())
+  kode       String    @unique
+  nomor      String
+  nama       String    @default("")
+  tipe       String    // "terdaftar" | "extra"
+  status     String    @default("belum") // "belum" | "sudah"
+  used_at    DateTime?
+  created_at DateTime  @default(now())
+
+  @@map("kupons")
+}
