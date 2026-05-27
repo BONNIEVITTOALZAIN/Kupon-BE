@@ -36,6 +36,8 @@ router.get('/stats', kuponController.getStats);
 // Kupon CRUD
 router.post('/kupons', createKuponValidation, validate, kuponController.create);
 router.get('/kupons', listKuponValidation, validate, kuponController.findAll);
+router.post('/kupons/reset-status', kuponController.resetAllStatus);
+router.post('/kupons/delete-all', kuponController.deleteAll);
 router.get('/kupons/:id', getKuponValidation, validate, kuponController.findById);
 router.put('/kupons/:id', updateKuponValidation, validate, kuponController.update);
 router.delete('/kupons/:id', deleteKuponValidation, validate, kuponController.delete);

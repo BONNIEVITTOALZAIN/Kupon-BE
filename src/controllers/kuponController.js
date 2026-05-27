@@ -76,9 +76,33 @@ class KuponController {
   async scan(req, res, next) {
     try {
       const { kode } = req.body;
-      const result = await kuponService.scan(kode);
+      const result = await kuponService.scan(kode, req.user.email);
       const statusCode = result.valid ? 200 : 400;
       return apiResponse(res, statusCode, result.message, result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * POST /api/kupons/reset-status - Reset all coupons status back to 'belum'
+   */
+  async resetAllStatus(req, res, next) {
+    try {
+      await kuponService.resetAllStatus();
+      return apiResponse(res, 200, 'Semua status kupon berhasil direset menjadi belum diambil');
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * POST /api/kupons/delete-all - Delete all coupons
+   */
+  async deleteAll(req, res, next) {
+    try {
+      await kuponService.deleteAll();
+      return apiResponse(res, 200, 'Semua data kupon berhasil dihapus secara permanen');
     } catch (error) {
       next(error);
     }

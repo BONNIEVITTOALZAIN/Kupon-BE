@@ -118,7 +118,7 @@ class KuponService {
   /**
    * Scan QR - validate and update status
    */
-  async scan(kode) {
+  async scan(kode, scannedByEmail = '') {
     const kupon = await prisma.kupon.findUnique({ where: { kode } });
 
     if (!kupon) {
@@ -130,9 +130,11 @@ class KuponService {
     }
 
     if (kupon.status === 'sudah') {
+      const formattedTime = kupon.used_at ? new Date(kupon.used_at).toLocaleString('id-ID') : '-';
+      const scannedByMsg = kupon.scanned_by ? ` oleh ${kupon.scanned_by}` : '';
       return {
         valid: false,
-        message: `Kupon sudah digunakan pada ${kupon.used_at ? new Date(kupon.used_at).toLocaleString('id-ID') : '-'}`,
+        message: `Kupon sudah digunakan pada ${formattedTime}${scannedByMsg}`,
         kupon,
       };
     }
@@ -143,6 +145,7 @@ class KuponService {
       data: {
         status: 'sudah',
         used_at: new Date(),
+        scanned_by: scannedByEmail,
       },
     });
 
@@ -151,6 +154,28 @@ class KuponService {
       message: 'Kupon valid! Daging dapat diambil.',
       kupon: updatedKupon,
     };
+  }
+
+  /**
+   * Reset all coupons status back to 'belum'
+   */
+  async resetAllStatus() {
+    await prisma.kupon.updateMany({
+      data: {
+        status: 'belum',
+        used_at: null,
+        scanned_by: '',
+      },
+    });
+    return true;
+  }
+
+  /**
+   * Delete all coupons from database
+   */
+  async deleteAll() {
+    await prisma.kupon.deleteMany();
+    return true;
   }
 
   /**
