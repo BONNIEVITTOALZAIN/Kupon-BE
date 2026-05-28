@@ -3,6 +3,7 @@ const router = express.Router();
 const kuponController = require('../controllers/kuponController');
 const pdfController = require('../controllers/pdfController');
 const excelController = require('../controllers/excelController');
+const assistantController = require('../controllers/assistantController');
 const { validate } = require('../middleware/validate');
 const {
   createKuponValidation,
@@ -12,6 +13,7 @@ const {
   scanValidation,
   listKuponValidation,
 } = require('../validations/kuponValidation');
+const { chatValidation } = require('../validations/assistantValidation');
 
 const { protect } = require('../middleware/auth');
 const authController = require('../controllers/authController');
@@ -53,5 +55,8 @@ router.get('/generate-pdf', pdfController.generatePDF);
 
 // Excel Export
 router.get('/export-excel', excelController.exportExcel);
+
+// AI Assistant Chat
+router.post('/assistant/chat', chatValidation, validate, assistantController.chat);
 
 module.exports = router;
